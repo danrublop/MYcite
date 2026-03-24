@@ -3,7 +3,7 @@ import {
     Home, User, Briefcase, Mail, Github, Twitter, Linkedin,
     Settings, Camera, MessageCircle, Music, Play, Pause, SkipForward, SkipBack, Volume2, X,
     Wifi, Battery, Search, Layers, Command, ChevronLeft, Send, MoreHorizontal,
-    Code, Globe, Cpu, Smartphone, Database, Terminal
+    Code, Globe, Cpu, Smartphone, Database, Terminal, BookOpen
 } from 'lucide-react'
 import Grainient from './Grainient'
 
@@ -118,7 +118,47 @@ const SwiftlyIcon = ({ size = 64 }) => (
     />
 )
 
-const FolderIcon = ({ icons = [] }) => {
+const ThriiveIcon = ({ size = 64 }) => (
+    <img
+        src="/thriive-logo.png"
+        alt="Thriive AI"
+        style={{ width: size, height: size, objectFit: 'contain' }}
+    />
+)
+
+const BlackLogoIcon = ({ size = 64 }) => (
+    <img
+        src="/black.svg"
+        alt="Black"
+        style={{ width: size, height: size, objectFit: 'contain' }}
+    />
+)
+
+const BlackLogoWhiteIcon = ({ size = 64 }) => (
+    <img
+        src="/black.svg"
+        alt="Agentic Video Editor"
+        style={{ width: size, height: size, objectFit: 'contain', filter: 'brightness(0) invert(1)' }}
+    />
+)
+
+const FolderIcon = ({ apps = [] }) => {
+    const getMiniBg = (appId) => {
+        if (appId === 'black') return 'linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(10, 10, 10, 0.98) 100%)'
+        if (appId === 'ecomerse') return '#ffffff'
+        if (appId === 'swiftly') return 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)'
+        if (appId === 'thriive') return 'linear-gradient(135deg, #ffffff 0%, #f3f5f8 100%)'
+        return 'rgba(255, 255, 255, 0.18)'
+    }
+
+    const getMiniIconSize = (appId) => {
+        if (appId === 'ecomerse') return 36
+        if (appId === 'swiftly') return 32
+        if (appId === 'thriive') return 32
+        if (appId === 'black') return 30
+        return 30
+    }
+
     return (
         <div style={{ 
             width: '100%', 
@@ -126,34 +166,128 @@ const FolderIcon = ({ icons = [] }) => {
             display: 'grid', 
             gridTemplateColumns: 'repeat(2, 1fr)', 
             gridTemplateRows: 'repeat(2, 1fr)',
-            padding: '48px', 
-            gap: '6px',
-            background: 'transparent',
+            padding: '12px',
+            gap: '4px',
+            background: 'rgba(255,255,255,0.14)',
+            borderRadius: '18px',
+            boxSizing: 'border-box'
         }}>
-            {icons.slice(0, 3).map((Icon, idx) => (
+            {apps.slice(0, 4).map((app, idx) => (
                 <div key={idx} style={{ 
                     display: 'flex', 
                     justifyContent: 'center', 
                     alignItems: 'center',
-                    background: 'rgba(255, 255, 255, 0.15)',
-                    borderRadius: '4px',
-                    border: '1px solid rgba(255, 255, 255, 0.18)',
-                    aspectRatio: '1/1'
+                    aspectRatio: '1/1',
+                    borderRadius: '10px'
                 }}>
-                    <Icon size={14} color="white" strokeWidth={1.5} />
+                    <div style={{
+                        width: '82%',
+                        height: '82%',
+                        borderRadius: '9px',
+                        border: '1px solid rgba(255, 255, 255, 0.2)',
+                        background: getMiniBg(app.id),
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center'
+                    }}>
+                        <app.icon
+                            size={getMiniIconSize(app.id)}
+                            color={app.id === 'black' ? 'white' : app.color}
+                            strokeWidth={app.id === 'black' ? 0 : 1.5}
+                        />
+                    </div>
                 </div>
             ))}
         </div>
     )
 }
 
-const ExternalModal = ({ appId, apps, setActiveApp }) => {
+const ProjectsFolderModal = ({ apps, setActiveApp, openApp, modalPopStyle, isClosing = false, interactive = true }) => {
+    const projectIds = ['swiftly', 'ecomerse', 'thriive', 'black']
+    const projectApps = apps.filter(app => projectIds.includes(app.id))
+
+    return (
+        <div
+            onClick={interactive ? () => setActiveApp('home') : undefined}
+            style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'transparent',
+                pointerEvents: interactive ? 'auto' : 'none'
+            }}
+        >
+            <div
+                className={`glass-card modal-pop folder-modal ${isClosing ? 'folder-pop-out' : ''}`}
+                onClick={(e) => e.stopPropagation()}
+                style={{
+                    width: '500px',
+                    borderRadius: '30px',
+                    padding: '24px 26px 28px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '14px',
+                    ...modalPopStyle
+                }}
+            >
+                <div style={{ color: '#fff', fontSize: '18px', fontWeight: '700', textAlign: 'center' }}>Projects</div>
+                <div style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(4, 1fr)',
+                    gap: '16px',
+                    justifyItems: 'center'
+                }}>
+                    {projectApps.map(app => (
+                        <div
+                            key={app.id}
+                            onClick={(e) => openApp(app.id, e)}
+                            style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer' }}
+                            className="app-icon"
+                        >
+                            <div style={{
+                                width: '90px',
+                                height: '90px',
+                                borderRadius: '22px',
+                                background: app.id === 'black'
+                                    ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(10, 10, 10, 0.98) 100%)'
+                                    : app.id === 'ecomerse'
+                                        ? 'white'
+                                        : app.id === 'swiftly'
+                                            ? 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)'
+                                            : 'linear-gradient(135deg, #ffffff 0%, #f3f5f8 100%)',
+                                border: '1px solid rgba(255,255,255,0.25)',
+                                display: 'flex',
+                                justifyContent: 'center',
+                                alignItems: 'center',
+                                marginBottom: '8px'
+                            }}>
+                                <app.icon
+                                    size={app.id === 'ecomerse' ? 88 : app.id === 'swiftly' ? 74 : app.id === 'thriive' ? 74 : 66}
+                                    color={app.id === 'black' ? 'white' : app.color}
+                                    style={{ zIndex: 1 }}
+                                />
+                            </div>
+                            <span style={{ color: '#fff', fontSize: '13px', fontWeight: '600', textAlign: 'center', lineHeight: '1.2' }}>
+                                {app.title}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const ExternalModal = ({ appId, apps, onClose, modalPopStyle, isClosing }) => {
     const app = apps.find(a => a.id === appId)
     if (!app) return null
 
     return (
         <div 
-            onClick={() => setActiveApp('home')}
+            onClick={onClose}
             style={{ 
                 position: 'absolute', 
                 inset: 0, 
@@ -161,24 +295,22 @@ const ExternalModal = ({ appId, apps, setActiveApp }) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent',
+                pointerEvents: 'auto'
             }}
         >
             <div 
                 onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
                 style={{ 
                     width: '340px', 
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
                     borderRadius: '32px', 
                     padding: '40px 30px', 
                     display: 'flex', 
                     flexDirection: 'column', 
                     alignItems: 'center', 
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
                 }}
             >
                 <div style={{ 
@@ -208,7 +340,7 @@ const ExternalModal = ({ appId, apps, setActiveApp }) => {
                     <button 
                         onClick={() => {
                             window.open(app.url, '_blank')
-                            setActiveApp('home')
+                            onClose()
                         }}
                         style={{ 
                             padding: '16px', 
@@ -222,10 +354,10 @@ const ExternalModal = ({ appId, apps, setActiveApp }) => {
                             boxShadow: '0 8px 20px rgba(0,122,255,0.3)'
                         }}
                     >
-                        Open Profile
+                        Open
                     </button>
                     <button 
-                        onClick={() => setActiveApp('home')}
+                        onClick={onClose}
                         style={{ 
                             padding: '16px', 
                             background: 'rgba(255, 255, 255, 0.15)', 
@@ -247,8 +379,8 @@ const ExternalModal = ({ appId, apps, setActiveApp }) => {
 
 const StackModal = ({ setActiveApp }) => {
     const stack = {
-        languages: ['Java', 'Python', 'Nextjs', 'React'],
-        tools: ['Stripe', 'Supabase', 'Cursor', 'Claude Code', 'Ollama']
+        languages: ['Java', 'Python', 'Nextjs', 'React', 'TypeScript'],
+        tools: ['Stripe', 'Supabase', 'Cursor', 'Claude Code', 'Ollama', 'FastAPI', 'FFmpeg', 'WebGL']
     }
 
     return (
@@ -261,23 +393,18 @@ const StackModal = ({ setActiveApp }) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent'
             }}
         >
             <div 
                 onClick={(e) => e.stopPropagation()}
+                className="glass-card"
                 style={{ 
                     width: '400px', 
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
                     borderRadius: '32px', 
                     padding: '40px', 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
                 }}
             >
                 <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px' }}>
@@ -356,6 +483,99 @@ const StackModal = ({ setActiveApp }) => {
     )
 }
 
+const EducationModal = ({ onClose, modalPopStyle, isClosing }) => {
+    return (
+        <div
+            onClick={onClose}
+            style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'transparent',
+                pointerEvents: 'auto'
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
+                style={{
+                    width: '420px',
+                    borderRadius: '32px',
+                    padding: '34px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '20px',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
+                }}
+            >
+                <div
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        padding: '4px 2px',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '14px'
+                    }}
+                >
+                    <img
+                        src="/stony-brook-seal.png"
+                        alt="Stony Brook University seal"
+                        style={{ width: '64px', height: '64px', borderRadius: '12px', objectFit: 'cover', background: '#fff' }}
+                    />
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                        <span style={{ color: '#ffffff', fontSize: '18px', fontWeight: '700' }}>Stony Brook University</span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', fontWeight: '600' }}>Computer Science</span>
+                        <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>Graduation: 2028</span>
+                    </div>
+                </div>
+
+                <div
+                    style={{
+                        width: '100%',
+                        height: 'auto',
+                        padding: '4px 2px',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '4px'
+                    }}
+                >
+                    <span style={{ color: '#ffffff', fontSize: '18px', fontWeight: '700' }}>
+                        Developer at Department of Information Technology
+                    </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.85)', fontSize: '15px', fontWeight: '600' }}>
+                        Stony Brook University
+                    </span>
+                    <span style={{ color: 'rgba(255, 255, 255, 0.7)', fontSize: '14px' }}>
+                        February 2025 - Present
+                    </span>
+                </div>
+
+                <button
+                    onClick={onClose}
+                    style={{
+                        marginTop: '4px',
+                        padding: '14px',
+                        background: '#ffffff',
+                        color: '#1d1d1f',
+                        borderRadius: '14px',
+                        border: 'none',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        cursor: 'pointer'
+                    }}
+                >
+                    Done
+                </button>
+            </div>
+        </div>
+    )
+}
+
 const SearchModal = ({ apps, searchQuery, setSearchQuery, setActiveApp }) => {
     const allItems = [
         ...apps.map(a => ({ id: a.id, title: a.title, type: 'App', icon: a.icon, color: a.color })),
@@ -388,9 +608,7 @@ const SearchModal = ({ apps, searchQuery, setSearchQuery, setActiveApp }) => {
                 flexDirection: 'column',
                 alignItems: 'center', 
                 paddingTop: '80px',
-                background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent'
             }}
         >
             <div 
@@ -403,16 +621,12 @@ const SearchModal = ({ apps, searchQuery, setSearchQuery, setActiveApp }) => {
                 }}
             >
                 {/* Search Bar */}
-                <div style={{ 
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
+                <div className="glass-card" style={{ 
                     borderRadius: '24px', 
                     padding: '16px 24px', 
                     display: 'flex', 
                     alignItems: 'center', 
                     gap: '15px',
-                    boxShadow: '0 20px 40px rgba(0,0,0,0.2)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
                 }}>
                     <Search size={24} color="#ffffff" />
                     <input 
@@ -435,15 +649,11 @@ const SearchModal = ({ apps, searchQuery, setSearchQuery, setActiveApp }) => {
 
                 {/* Results Container */}
                 {filteredResults.length > 0 && (
-                    <div style={{ 
-                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                        backdropFilter: 'blur(50px) saturate(190%)',
+                    <div className="glass-card" style={{ 
                         borderRadius: '24px', 
                         padding: '12px', 
                         display: 'flex', 
                         flexDirection: 'column',
-                        boxShadow: '0 30px 60px rgba(0,0,0,0.3)',
-                        border: '1px solid rgba(255, 255, 255, 0.35)',
                         animation: 'fadeIn 0.2s ease-out'
                     }}>
                         {filteredResults.map((result, idx) => (
@@ -492,7 +702,7 @@ const SearchModal = ({ apps, searchQuery, setSearchQuery, setActiveApp }) => {
     )
 }
 
-const MusicModal = ({ setActiveApp }) => {
+const MusicModal = ({ onClose, modalPopStyle, isClosing }) => {
     const audioRef = useRef(null)
     const [isPlaying, setIsPlaying] = useState(false)
     const [currentTime, setCurrentTime] = useState(0)
@@ -542,7 +752,7 @@ const MusicModal = ({ setActiveApp }) => {
 
     return (
         <div 
-            onClick={() => setActiveApp('home')}
+            onClick={onClose}
             style={{ 
                 position: 'absolute', 
                 inset: 0, 
@@ -550,24 +760,22 @@ const MusicModal = ({ setActiveApp }) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                background: 'rgba(0,0,0,0.4)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent',
+                pointerEvents: 'auto'
             }}
         >
             <div 
                 onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
                 style={{ 
                     width: '360px', 
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
                     borderRadius: '40px', 
                     padding: '30px', 
                     display: 'flex', 
                     flexDirection: 'column', 
                     alignItems: 'center',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.3)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
                 }}
             >
                 <audio 
@@ -696,7 +904,357 @@ const MusicModal = ({ setActiveApp }) => {
     )
 }
 
-const PhotoBoothModal = ({ setActiveApp }) => {
+const ThriiveModal = ({ onClose, modalPopStyle, isClosing }) => {
+    return (
+        <div
+            onClick={onClose}
+            style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'transparent',
+                pointerEvents: 'auto'
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
+                style={{
+                    width: '760px',
+                    borderRadius: '34px',
+                    padding: '30px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '18px',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
+                }}
+            >
+                <h3 style={{ margin: 0, fontSize: '30px', color: '#fff', fontWeight: 800, lineHeight: 1.2, textShadow: '0 4px 16px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.55)' }}>
+                    Thriive AI: AI Explainer Video Genrator
+                </h3>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    {[
+                        { name: 'Python', color: '#F7D046' },
+                        { name: 'FastAPI', color: '#53D4A5' },
+                        { name: 'React', color: '#70E1FF' },
+                        { name: 'TypeScript', color: '#7EB6FF' },
+                        { name: 'FFmpeg', color: '#FF9D6C' },
+                        { name: 'WebGL', color: '#D7A6FF' }
+                    ].map((item) => (
+                        <div
+                            key={item.name}
+                            className="glass-card"
+                            style={{
+                                borderRadius: '12px',
+                                padding: '8px 14px',
+                                fontSize: '14px',
+                                fontWeight: '700',
+                                color: item.color,
+                                lineHeight: 1,
+                                textShadow: '0 1px 3px rgba(0,0,0,0.28)'
+                            }}
+                        >
+                            {item.name}
+                        </div>
+                    ))}
+                </div>
+
+                <div
+                    className="glass-card"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.78)',
+                        backdropFilter: 'blur(18px)',
+                        WebkitBackdropFilter: 'blur(18px)',
+                        borderRadius: '18px',
+                        padding: '16px 18px',
+                        border: '1px solid rgba(255,255,255,0.65)',
+                        color: '#111111',
+                        fontSize: '18px',
+                        lineHeight: '1.55',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                    }}
+                >
+                    <p style={{ margin: 0 }}>
+                        Built a full-stack AI explainer video generator that converts prompts into polished videos with AI-generated scenes, narration, and overlays
+                    </p>
+                    <p style={{ margin: 0 }}>
+                        Integrated 5+ AI APIs (OpenAI, Google Veo 3, HeyGen) for automated voiceover, talking avatars, background video/image, and music generation
+                    </p>
+                    <p style={{ margin: 0 }}>
+                        Engineered a WebGL-accelerated multi-track preview engine with 60fps playback, real-time GPU filters, and 110+ REST API endpoints
+                    </p>
+                </div>
+
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '14px', maxWidth: '620px', alignSelf: 'center', width: '100%' }}>
+                    <div className="glass-card" style={{ borderRadius: '16px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <img
+                            src="/thriive-frame-3.jpg"
+                            alt="Thriive video frame at 3 seconds"
+                            style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '10px' }}
+                        />
+                    </div>
+                    <div className="glass-card" style={{ borderRadius: '16px', padding: '10px', display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                        <img
+                            src="/thriive-frame-18.jpg"
+                            alt="Thriive video frame at 18 seconds"
+                            style={{ width: '100%', aspectRatio: '16/9', objectFit: 'cover', borderRadius: '10px' }}
+                        />
+                    </div>
+                </div>
+
+                <button
+                    onClick={onClose}
+                    style={{
+                        marginTop: '2px',
+                        padding: '14px',
+                        background: '#ffffff',
+                        color: '#1d1d1f',
+                        borderRadius: '14px',
+                        border: 'none',
+                        fontWeight: '700',
+                        fontSize: '16px',
+                        cursor: 'pointer',
+                        width: '170px',
+                        alignSelf: 'flex-end'
+                    }}
+                >
+                    Done
+                </button>
+            </div>
+        </div>
+    )
+}
+
+const AgenticVideoEditorModal = ({ onClose, modalPopStyle, isClosing }) => {
+    return (
+        <div
+            onClick={onClose}
+            style={{
+                position: 'absolute',
+                inset: 0,
+                zIndex: 1000,
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                background: 'transparent',
+                pointerEvents: 'auto'
+            }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
+                style={{
+                    width: '760px',
+                    borderRadius: '34px',
+                    padding: '30px',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    gap: '18px',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
+                }}
+            >
+                <h3 style={{ margin: 0, fontSize: '30px', color: '#fff', fontWeight: 800, lineHeight: 1.2, textShadow: '0 4px 16px rgba(0,0,0,0.45), 0 1px 2px rgba(0,0,0,0.55)' }}>
+                    Agentic Video Editor - LLM-Controlled Video Editor
+                </h3>
+
+                <div style={{ display: 'flex', flexWrap: 'wrap', gap: '10px' }}>
+                    {[
+                        { name: 'Python', color: '#F7D046' },
+                        { name: 'FastAPI', color: '#53D4A5' },
+                        { name: 'React', color: '#70E1FF' },
+                        { name: 'TypeScript', color: '#7EB6FF' },
+                        { name: 'Qt', color: '#52E28D' },
+                        { name: 'FFmpeg', color: '#FF9D6C' },
+                        { name: 'WebGL', color: '#D7A6FF' }
+                    ].map((item) => (
+                        <div
+                            key={item.name}
+                            className="glass-card"
+                            style={{
+                                borderRadius: '12px',
+                                padding: '8px 14px',
+                                fontSize: '14px',
+                                fontWeight: '700',
+                                color: item.color,
+                                lineHeight: 1,
+                                textShadow: '0 1px 3px rgba(0,0,0,0.28)'
+                            }}
+                        >
+                            {item.name}
+                        </div>
+                    ))}
+                </div>
+
+                <div
+                    className="glass-card"
+                    style={{
+                        background: 'rgba(255, 255, 255, 0.78)',
+                        backdropFilter: 'blur(18px)',
+                        WebkitBackdropFilter: 'blur(18px)',
+                        borderRadius: '18px',
+                        padding: '16px 18px',
+                        border: '1px solid rgba(255,255,255,0.65)',
+                        color: '#111111',
+                        fontSize: '18px',
+                        lineHeight: '1.55',
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '12px'
+                    }}
+                >
+                    <p style={{ margin: 0 }}>
+                        Architected a professional video editor fully controllable by AI agents via 61 REST API endpoints covering every editing operation
+                    </p>
+                    <p style={{ margin: 0 }}>
+                        Integrated 6 AI models (Veo 3, DALL-E 3, HeyGen, Gemini/OpenAI TTS, Lyria) for end-to-end automated media generation pipelines
+                    </p>
+                    <p style={{ margin: 0 }}>
+                        Built a WebGL-accelerated preview engine with 60fps multi-track playback and a native Qt desktop rebuild with hardware-accelerated rendering
+                    </p>
+                </div>
+
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '12px', marginTop: '2px' }}>
+                    <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                        <a
+                            href="https://github.com/danrublop/cench-to-the-moon.git"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="glass-card"
+                            style={{
+                                padding: '10px 14px',
+                                borderRadius: '12px',
+                                color: '#121212',
+                                textDecoration: 'none',
+                                fontWeight: '700',
+                                fontSize: '14px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <Github size={16} color="#121212" />
+                            Web-Based Repo
+                        </a>
+                        <a
+                            href="https://github.com/danrublop/Agentic-video-editor-web-based.git"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="glass-card"
+                            style={{
+                                padding: '10px 14px',
+                                borderRadius: '12px',
+                                color: '#121212',
+                                textDecoration: 'none',
+                                fontWeight: '700',
+                                fontSize: '14px',
+                                display: 'inline-flex',
+                                alignItems: 'center',
+                                gap: '8px'
+                            }}
+                        >
+                            <Github size={16} color="#121212" />
+                            Qt-Based Repo
+                        </a>
+                    </div>
+
+                    <button
+                        onClick={onClose}
+                        style={{
+                            padding: '14px',
+                            background: '#ffffff',
+                            color: '#1d1d1f',
+                            borderRadius: '14px',
+                            border: 'none',
+                            fontWeight: '700',
+                            fontSize: '16px',
+                            cursor: 'pointer',
+                            width: '170px'
+                        }}
+                    >
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    )
+}
+
+const ExperienceModal = ({ onClose, modalPopStyle, isClosing }) => {
+    const [selectedExperience, setSelectedExperience] = useState(null)
+
+    const experienceItems = [
+        { company: 'Basics on Broadway', role: 'Locksmith', timeline: 'August 2025 - Feb 2026', location: 'Manhattan, NY', icon: '/experience-key.png', bg: 'linear-gradient(135deg, #ffffff 0%, #f5f9ff 100%)' },
+        { company: 'Developer at Department of Information Technology', role: 'Developer', timeline: 'February 2025 - Present', location: 'Stony Brook University', icon: '/experience-windows.svg', bg: 'linear-gradient(135deg, #ffffff 0%, #f3f4f7 100%)', iconStyle: { imageRendering: 'pixelated', filter: 'contrast(1.1) saturate(0.95)' } },
+        { company: 'Goodfellas Pizza', role: 'Cashier', timeline: 'June 2023 - September 2024', location: 'Bronx, NY', icon: '/experience-pizza.png', bg: 'linear-gradient(135deg, #ffffff 0%, #fff6f0 100%)' },
+        { company: 'College Soccer Guy', role: 'Video editor', timeline: 'April 2024 - June 2025', location: 'Los Angeles, California (Remote)', icon: '/experience-pr.png', bg: 'linear-gradient(135deg, #ffffff 0%, #f4f7ff 100%)' },
+        { company: 'Riverdale Window Cleaning', role: 'Co-Founder', timeline: 'June 2023 - October 2023', location: 'Bronx, NY', icon: '/experience-window-cleaning.png', bg: 'linear-gradient(135deg, #ffffff 0%, #f4fbff 100%)', iconStyle: { transform: 'translateX(-7px) scale(1.08)' } },
+        { company: 'Coalition for Asian American Children and Families', role: 'Volunteer', timeline: 'September 2022 - June 2023', location: 'New York, NY', icon: '/experience-book.png', bg: 'linear-gradient(135deg, #ffffff 0%, #f8f6ff 100%)' }
+    ]
+
+    return (
+        <div
+            onClick={() => {
+                if (selectedExperience) {
+                    setSelectedExperience(null)
+                } else {
+                    onClose()
+                }
+            }}
+            style={{ position: 'absolute', inset: 0, zIndex: 1000, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'flex-start', paddingTop: '72px', gap: '14px', background: 'transparent', pointerEvents: 'auto' }}
+        >
+            <div
+                onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop folder-modal ${isClosing ? 'folder-pop-out' : ''}`}
+                style={{ width: '940px', maxWidth: '95%', borderRadius: '34px', padding: '24px 24px 20px', display: 'flex', flexDirection: 'column', gap: '14px', pointerEvents: 'auto', position: 'relative', ...modalPopStyle }}
+            >
+                <div style={{ color: '#fff', fontSize: '18px', fontWeight: '700', textAlign: 'center' }}>Experience</div>
+
+                <div style={{ display: 'flex', gap: '18px', justifyContent: 'space-between', paddingBottom: '6px' }}>
+                    {experienceItems.map((item) => (
+                        <div key={`${item.company}-${item.role}`} onClick={() => setSelectedExperience(item)} className="app-icon" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', width: '130px' }}>
+                            <div style={{ width: '92px', height: '92px', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '8px', overflow: 'hidden' }}>
+                                <img
+                                    src={item.icon}
+                                    alt={item.company}
+                                    style={{ width: '78px', height: '78px', objectFit: 'contain', ...item.iconStyle }}
+                                />
+                            </div>
+                            <span style={{ color: '#fff', fontSize: '14px', fontWeight: 700, textAlign: 'center', lineHeight: '1.2', textShadow: '0 2px 5px rgba(0,0,0,0.45)' }}>
+                                {item.role}
+                            </span>
+                        </div>
+                    ))}
+                </div>
+
+            </div>
+            {selectedExperience && (
+                <div onClick={(e) => e.stopPropagation()} style={{ width: '480px', maxWidth: '88%' }}>
+                    <div className="glass-card modal-pop" style={{ borderRadius: '24px', padding: '20px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <img src={selectedExperience.icon} alt={selectedExperience.company} style={{ width: '44px', height: '44px', objectFit: 'contain', ...selectedExperience.iconStyle }} />
+                            <h4 style={{ margin: 0, fontSize: '20px', color: '#fff', fontWeight: 800 }}>{selectedExperience.company}</h4>
+                        </div>
+                        <div className="glass-card" style={{ background: 'rgba(255,255,255,0.78)', color: '#111', borderRadius: '14px', padding: '12px 14px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
+                            <span style={{ fontSize: '16px', fontWeight: 700 }}>{selectedExperience.role}</span>
+                            <span style={{ fontSize: '14px', fontWeight: 600 }}>{selectedExperience.timeline}</span>
+                            <span style={{ fontSize: '14px' }}>{selectedExperience.location}</span>
+                        </div>
+                    </div>
+                </div>
+            )}
+        </div>
+    )
+}
+
+const PhotoBoothModal = ({ onClose, modalPopStyle, isClosing }) => {
     const videoRef = useRef(null)
     const [hasStream, setHasStream] = useState(false)
     const [photos, setPhotos] = useState([])
@@ -764,7 +1322,7 @@ const PhotoBoothModal = ({ setActiveApp }) => {
 
     return (
         <div 
-            onClick={() => setActiveApp('home')}
+            onClick={onClose}
             style={{ 
                 position: 'absolute', 
                 inset: 0, 
@@ -772,26 +1330,24 @@ const PhotoBoothModal = ({ setActiveApp }) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent',
+                pointerEvents: 'auto'
             }}
         >
             <div 
                 onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
                 style={{ 
                     width: '500px', 
                     height: '620px', // Fixed height to prevent jumping
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
                     borderRadius: '40px', 
                     padding: '30px', 
                     display: 'flex', 
                     flexDirection: 'column', 
                     alignItems: 'center',
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
                     position: 'relative',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
                 }}
             >
                 {/* Header with toggle */}
@@ -819,7 +1375,7 @@ const PhotoBoothModal = ({ setActiveApp }) => {
                         )}
                     </div>
                     <div 
-                        onClick={() => setActiveApp('home')}
+                        onClick={onClose}
                         style={{ 
                             width: '32px', 
                             height: '32px', 
@@ -1026,7 +1582,7 @@ const PhotoBoothModal = ({ setActiveApp }) => {
     )
 }
 
-const MessagesModal = ({ setActiveApp }) => {
+const MessagesModal = ({ onClose, modalPopStyle, isClosing }) => {
     const [messages, setMessages] = useState([
         { id: 1, text: "Hey! How's the personal site coming along?", sender: 'other', time: '10:41 AM' },
         { id: 2, text: "Almost done! Just adding the finishing touches to the iMessage interface. 🚀", sender: 'me', time: '10:42 AM' },
@@ -1068,7 +1624,7 @@ const MessagesModal = ({ setActiveApp }) => {
 
     return (
         <div 
-            onClick={() => setActiveApp('home')}
+            onClick={onClose}
             style={{ 
                 position: 'absolute', 
                 inset: 0, 
@@ -1076,24 +1632,22 @@ const MessagesModal = ({ setActiveApp }) => {
                 display: 'flex', 
                 alignItems: 'center', 
                 justifyContent: 'center', 
-                background: 'rgba(0,0,0,0.6)',
-                backdropFilter: 'blur(10px)',
-                animation: 'fadeIn 0.3s ease-out'
+                background: 'transparent',
+                pointerEvents: 'auto'
             }}
         >
             <div 
                 onClick={(e) => e.stopPropagation()}
+                className={`glass-card modal-pop ${isClosing ? 'modal-pop-out' : ''}`}
                 style={{ 
                     width: '400px', 
                     height: '600px', 
-                    background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0.2) 100%)', 
-                    backdropFilter: 'blur(50px) saturate(190%)',
                     borderRadius: '40px', 
                     display: 'flex', 
                     flexDirection: 'column', 
-                    boxShadow: '0 30px 60px rgba(0,0,0,0.4)',
-                    border: '1px solid rgba(255, 255, 255, 0.35)',
-                    overflow: 'hidden'
+                    overflow: 'hidden',
+                    pointerEvents: 'auto',
+                    ...modalPopStyle
                 }}
             >
                 {/* iMessage Header */}
@@ -1106,7 +1660,7 @@ const MessagesModal = ({ setActiveApp }) => {
                     background: 'rgba(255,255,255,0.1)'
                 }}>
                     <div style={{ display: 'flex', justifyContent: 'space-between', width: '100%', marginBottom: '10px' }}>
-                        <div onClick={() => setActiveApp('home')} style={{ cursor: 'pointer', color: '#007AFF' }}>
+                        <div onClick={onClose} style={{ cursor: 'pointer', color: '#007AFF' }}>
                             <ChevronLeft size={24} />
                         </div>
                         <div style={{ cursor: 'pointer', color: '#007AFF' }}>
@@ -1230,11 +1784,17 @@ const MessagesModal = ({ setActiveApp }) => {
 }
 
 export const TabletUI = ({ activeApp, setActiveApp }) => {
+    const tabletRootRef = useRef(null)
     const [currentTime, setCurrentTime] = useState(new Date())
     const [searchQuery, setSearchQuery] = useState('')
     const [openedApps, setOpenedApps] = useState(new Set())
     const [loadingApps, setLoadingApps] = useState(new Set())
     const [showToast, setShowToast] = useState(false)
+    const [modalOrigin, setModalOrigin] = useState(null)
+    const [isModalClosing, setIsModalClosing] = useState(false)
+    const [projectsClosingGhostOrigin, setProjectsClosingGhostOrigin] = useState(null)
+    const modalTransitionTimeoutRef = useRef(null)
+    const projectsGhostTimeoutRef = useRef(null)
 
     const copyEmail = (e) => {
         e.stopPropagation()
@@ -1253,7 +1813,7 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
     }
 
     const apps = [
-        { id: 'about', title: 'Resume', icon: UserCircleIcon, color: '#007AFF' },
+        { id: 'about', title: 'Education', icon: BookOpen, color: '#007AFF' },
         { id: 'linkedin', title: 'LinkedIn', icon: Linkedin, color: '#0077B5', url: 'https://www.linkedin.com/in/daniel-lopez-009620276' },
         { id: 'music', title: 'Music', icon: MusicIconCustom, color: '#FF3B30' },
         { id: 'messages', title: 'Contact', icon: MessageIcon, color: '#5856D6' },
@@ -1261,29 +1821,113 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
         { id: 'twitter', title: 'X', icon: XIconCustom, color: '#000000', url: 'https://x.com/danrublop' },
         { id: 'ecomerse', title: 'Ecommerce', icon: EcomerseIcon, color: '#FFFFFF', url: 'https://harvell-ml18.vercel.app/' },
         { id: 'swiftly', title: 'Swiftly', icon: SwiftlyIcon, color: '#FFFFFF', url: 'https://www.swftly.app/' },
+        { id: 'thriive', title: 'Thriive AI', icon: ThriiveIcon, color: '#FFFFFF' },
+        { id: 'black', title: 'Agentic Video Editor', icon: BlackLogoWhiteIcon, color: '#FFFFFF' },
+        { id: 'photos', title: 'Camera', icon: Camera, color: '#FF2D55' },
+    ]
+    const projectsFolder = {
+        id: 'projects-folder',
+        title: 'Projects',
+        isFolder: true,
+        folderApps: [
+            apps.find(app => app.id === 'swiftly'),
+            apps.find(app => app.id === 'black'),
+            apps.find(app => app.id === 'thriive'),
+            apps.find(app => app.id === 'ecomerse'),
+        ].filter(Boolean),
+        color: '#FFFFFF'
+    }
+    const homeApps = [
+        ...apps.filter(app => !['swiftly', 'ecomerse', 'thriive', 'black'].includes(app.id)),
+        projectsFolder
     ]
 
     const dockApps = [
         { id: 'search', title: 'Search', icon: Search, color: '#AF52DE' },
+        { id: 'experience', title: 'Home', icon: Home, color: '#ffffff' },
         { id: 'stack', title: 'Stack', icon: Layers, color: '#FF9500' },
-        { id: 'photos', icon: Camera, color: '#FF2D55' },
     ]
 
-    const openApp = (appId) => {
-        setActiveApp(appId)
-        // Only trigger background persistence for apps that have a dedicated full-screen view
-        if (['about', 'ecomerse', 'swiftly'].includes(appId)) {
-            setOpenedApps(prev => new Set(prev).add(appId))
-            const app = [...apps, ...dockApps].find(a => a.id === appId)
-            if (app?.url) {
-                setLoadingApps(prev => new Set(prev).add(appId))
+    const MODAL_CLOSE_MS = 280
+    const modalApps = ['about', 'experience', 'linkedin', 'github', 'twitter', 'music', 'photos', 'messages', 'projects-folder', 'thriive', 'black']
+
+    const getOriginFromEvent = (event) => {
+        const rootRect = tabletRootRef.current?.getBoundingClientRect()
+        if (event?.currentTarget) {
+            const rect = event.currentTarget.getBoundingClientRect()
+            if (rootRect) {
+                return {
+                    x: rect.left + rect.width / 2 - rootRect.left,
+                    y: rect.top + rect.height / 2 - rootRect.top
+                }
             }
+            return { x: rect.left + rect.width / 2, y: rect.top + rect.height / 2 }
         }
+        if (rootRect) {
+            return { x: rootRect.width / 2, y: rootRect.height / 2 }
+        }
+        return { x: window.innerWidth / 2, y: window.innerHeight / 2 }
+    }
+
+    const performAppOpen = (appId, origin) => {
+        setModalOrigin(origin)
+        setActiveApp(appId)
+    }
+
+    const runModalTransition = (nextAction, duration = MODAL_CLOSE_MS) => {
+        if (modalTransitionTimeoutRef.current) {
+            clearTimeout(modalTransitionTimeoutRef.current)
+        }
+        setIsModalClosing(true)
+        modalTransitionTimeoutRef.current = setTimeout(() => {
+            setIsModalClosing(false)
+            nextAction()
+        }, duration)
+    }
+
+    const computeModalPopStyle = (origin, width, height) => {
+        if (!origin) return {}
+        const rootRect = tabletRootRef.current?.getBoundingClientRect()
+        const containerWidth = rootRect?.width || window.innerWidth
+        const containerHeight = rootRect?.height || window.innerHeight
+        const left = (containerWidth - width) / 2
+        const top = (containerHeight - height) / 2
+        return {
+            transformOrigin: `${origin.x - left}px ${origin.y - top}px`
+        }
+    }
+
+    const openApp = (appId, event) => {
+        const origin = getOriginFromEvent(event)
+        if (activeApp === 'projects-folder' && appId !== 'projects-folder') {
+            if (projectsGhostTimeoutRef.current) clearTimeout(projectsGhostTimeoutRef.current)
+            setProjectsClosingGhostOrigin(modalOrigin)
+            projectsGhostTimeoutRef.current = setTimeout(() => setProjectsClosingGhostOrigin(null), 260)
+            performAppOpen(appId, origin)
+            return
+        }
+        if (modalApps.includes(activeApp) && activeApp !== appId) {
+            runModalTransition(() => performAppOpen(appId, origin), MODAL_CLOSE_MS)
+            return
+        }
+        performAppOpen(appId, origin)
+    }
+
+    const closeModal = () => {
+        if (modalApps.includes(activeApp)) {
+            runModalTransition(() => setActiveApp('home'))
+            return
+        }
+        setActiveApp('home')
+    }
+
+    const getModalPopStyle = (width, height) => {
+        return computeModalPopStyle(modalOrigin, width, height)
     }
 
     const renderAppScreen = (appId, isVisible) => {
         // Social and Music apps should only show modals, not persistent background screens
-        if (['linkedin', 'github', 'twitter', 'music'].includes(appId)) return null;
+        if (['experience', 'linkedin', 'github', 'twitter', 'music', 'ecomerse', 'swiftly', 'thriive', 'black'].includes(appId)) return null;
 
         const app = [...apps, ...dockApps].find(a => a.id === appId) || { title: 'App', color: '#333', icon: Layers }
         const isLoading = loadingApps.has(appId)
@@ -1535,20 +2179,20 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
             {/* App Grid */}
             <main style={{ 
                 flex: 1, 
-                padding: '40px 60px',
+                padding: '12px 34px',
                 display: 'grid',
                 gridTemplateColumns: 'repeat(4, 1fr)',
-                gridTemplateRows: 'repeat(2, 1fr)',
-                gap: '40px',
+                gridTemplateRows: 'repeat(3, 1fr)',
+                gap: '20px',
                 justifyItems: 'center',
                 alignItems: 'start',
                 zIndex: 1,
                 pointerEvents: 'auto'
             }}>
-                {apps.map((app) => (
+                {homeApps.map((app) => (
                     <div 
                         key={app.id} 
-                        onClick={(e) => { e.stopPropagation(); openApp(app.id); }}
+                        onClick={(e) => { e.stopPropagation(); openApp(app.id, e); }}
                         style={{ 
                             display: 'flex', 
                             flexDirection: 'column', 
@@ -1558,37 +2202,45 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
                         className="app-icon"
                     >
                         <div style={{ 
-                            width: '120px', 
-                            height: '120px', 
-                            borderRadius: '26px', 
-                            background: ['github', 'twitter', 'linkedin', 'music', 'about', 'messages', 'ecomerse', 'swiftly'].includes(app.id)
+                            width: '112px', 
+                            height: '112px', 
+                            borderRadius: '24px', 
+                            background: ['github', 'twitter', 'linkedin', 'music', 'about', 'messages', 'ecomerse', 'swiftly', 'thriive', 'black', 'photos', 'projects-folder'].includes(app.id)
                                 ? app.id === 'github' 
                                     ? 'linear-gradient(135deg, rgba(80, 80, 80, 0.85) 0%, rgba(30, 30, 30, 0.95) 100%)'
                                     : app.id === 'twitter'
                                         ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(10, 10, 10, 0.98) 100%)'
+                                        : app.id === 'projects-folder'
+                                            ? 'rgba(120, 120, 130, 0.55)'
+                                        : app.id === 'black'
+                                            ? 'linear-gradient(135deg, rgba(50, 50, 50, 0.9) 0%, rgba(10, 10, 10, 0.98) 100%)'
                                         : app.id === 'linkedin'
                                             ? 'linear-gradient(135deg, rgba(0, 150, 230, 0.85) 0%, rgba(0, 100, 190, 0.95) 100%)'
                                             : app.id === 'music'
                                                 ? 'linear-gradient(135deg, rgba(255, 80, 100, 0.85) 0%, rgba(255, 40, 80, 0.95) 100%)'
                                                 : app.id === 'about'
                                                     ? 'linear-gradient(135deg, rgba(160, 180, 200, 0.85) 0%, rgba(100, 120, 140, 0.95) 100%)'
+                                                    : app.id === 'photos'
+                                                        ? 'linear-gradient(135deg, rgba(255, 85, 130, 0.88) 0%, rgba(255, 45, 85, 0.98) 100%)'
                                                     : app.id === 'ecomerse'
                                                         ? 'white'
                                                         : app.id === 'swiftly'
                                                             ? 'linear-gradient(135deg, #ffffff 0%, #f0f7ff 100%)'
-                                                            : 'linear-gradient(135deg, rgba(90, 235, 125, 0.85) 0%, rgba(65, 210, 100, 0.95) 100%)'
+                                                            : app.id === 'thriive'
+                                                                ? 'linear-gradient(135deg, #ffffff 0%, #f3f5f8 100%)'
+                                                                    : 'linear-gradient(135deg, rgba(90, 235, 125, 0.85) 0%, rgba(65, 210, 100, 0.95) 100%)'
                                 : 'rgba(255, 255, 255, 0.05)',
                             backdropFilter: 'blur(18px) saturate(110%)',
                             border: '1px solid rgba(255, 255, 255, 0.2)',
                             display: 'flex',
                             justifyContent: 'center',
                             alignItems: 'center',
-                            color: ['github', 'twitter', 'linkedin', 'music', 'about', 'messages'].includes(app.id) ? 'white' : app.color,
+                            color: ['github', 'twitter', 'linkedin', 'music', 'about', 'messages', 'black', 'photos', 'projects-folder'].includes(app.id) ? 'white' : app.color,
                             boxShadow: '0 10px 25px rgba(0,0,0,0.1)',
-                            marginBottom: '10px',
+                            marginBottom: '9px',
                             position: 'relative',
                             overflow: 'hidden'
-                        }}>
+                        }} className="app-tile">
                             {/* Subtle white sheen/gradient overlay for All Special Icons */}
                             {['github', 'twitter', 'linkedin', 'music', 'about', 'messages'].includes(app.id) && (
                                 <div style={{
@@ -1602,21 +2254,33 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
                                 }} />
                             )}
                             {app.isFolder ? (
-                                <FolderIcon icons={app.folderIcons} />
+                                <FolderIcon apps={app.folderApps} />
                             ) : (
                                 <app.icon 
-                                    size={app.id === 'twitter' ? 56 : app.id === 'about' ? 82 : app.id === 'ecomerse' ? 120 : app.id === 'swiftly' ? 100 : 64} 
-                                    color={['github', 'twitter', 'linkedin', 'music', 'about', 'messages', 'ecomerse'].includes(app.id) ? 'white' : app.color}
+                                    size={app.id === 'twitter' ? 52 : app.id === 'about' ? 62 : app.id === 'ecomerse' ? 108 : app.id === 'swiftly' ? 92 : app.id === 'thriive' ? 94 : app.id === 'black' ? 84 : 58} 
+                                    color={['github', 'twitter', 'linkedin', 'music', 'about', 'messages', 'ecomerse', 'photos', 'black'].includes(app.id) ? 'white' : app.color}
                                     strokeWidth={app.id === 'twitter' ? 0 : 1.5} 
                                     style={{ zIndex: 1 }}
                                 />
                             )}
+                            <div
+                                className="app-glass-outline"
+                                style={{
+                                    position: 'absolute',
+                                    inset: 0,
+                                    borderRadius: '24px',
+                                    pointerEvents: 'none'
+                                }}
+                            />
                         </div>
                         <span style={{ 
                             color: '#ffffff', 
-                            fontSize: '18px', 
+                            fontSize: '16px', 
                             fontWeight: '600',
-                            textShadow: '0 2px 4px rgba(0,0,0,0.5)'
+                            textShadow: '0 2px 4px rgba(0,0,0,0.5)',
+                            textAlign: 'center',
+                            lineHeight: '1.2',
+                            maxWidth: '170px'
                         }}>{app.title}</span>
                     </div>
                 ))}
@@ -1633,33 +2297,38 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
                 pointerEvents: 'auto'
             }}>
                 <div style={{ 
-                    background: 'rgba(255, 255, 255, 0.2)',
-                    backdropFilter: 'blur(40px) saturate(180%)',
+                    background: 'transparent',
                     borderRadius: '32px',
                     padding: '16px',
                     display: 'flex',
                     gap: '24px',
-                    border: '1px solid rgba(255, 255, 255, 0.3)',
-                    boxShadow: '0 20px 50px rgba(0,0,0,0.1)'
+                    position: 'relative'
                 }}>
+                    <div
+                        className="glass-card"
+                        style={{
+                            position: 'absolute',
+                            inset: 0,
+                            borderRadius: '32px',
+                            pointerEvents: 'none'
+                        }}
+                    />
                     {dockApps.map((app) => (
                         <div 
                             key={app.id} 
-                            onClick={(e) => { e.stopPropagation(); openApp(app.id); }}
+                            onClick={(e) => { e.stopPropagation(); openApp(app.id, e); }}
+                            className="dock-icon glass-card"
                             style={{ 
                                 width: '100px', 
                                 height: '100px', 
                                 borderRadius: '22px', 
-                                background: 'rgba(255, 255, 255, 0.08)',
-                                backdropFilter: 'blur(25px) saturate(110%)',
-                                border: '1px solid rgba(255, 255, 255, 0.2)',
                                 display: 'flex',
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 color: app.color,
                                 cursor: 'pointer',
+                                zIndex: 1
                             }}
-                            className="dock-icon"
                         >
                             <app.icon size={56} color={app.color} />
                         </div>
@@ -1669,10 +2338,17 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
         </>
     )
 
-    const isExternalApp = ['linkedin', 'github', 'twitter', 'stack', 'search', 'music', 'photos', 'messages'].includes(activeApp)
+    const isExternalApp = ['about', 'experience', 'linkedin', 'github', 'twitter', 'ecomerse', 'swiftly', 'thriive', 'black', 'stack', 'search', 'music', 'photos', 'messages', 'projects-folder'].includes(activeApp)
+
+    useEffect(() => {
+        return () => {
+            if (modalTransitionTimeoutRef.current) clearTimeout(modalTransitionTimeoutRef.current)
+            if (projectsGhostTimeoutRef.current) clearTimeout(projectsGhostTimeoutRef.current)
+        }
+    }, [])
 
     return (
-        <div style={{ 
+        <div ref={tabletRootRef} style={{ 
             width: '100%', 
             height: '100%', 
             background: (activeApp === 'home' || isExternalApp) ? '#000000' : '#f5f5f7',
@@ -1737,12 +2413,27 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
             </div>
 
             {/* Modal Layer */}
-            {['linkedin', 'github', 'twitter'].includes(activeApp) && <ExternalModal appId={activeApp} apps={apps} setActiveApp={setActiveApp} />}
+            {['linkedin', 'github', 'twitter', 'ecomerse', 'swiftly'].includes(activeApp) && <ExternalModal appId={activeApp} apps={apps} onClose={closeModal} modalPopStyle={getModalPopStyle(340, 460)} isClosing={isModalClosing} />}
+            {activeApp === 'about' && <EducationModal onClose={closeModal} modalPopStyle={getModalPopStyle(420, 420)} isClosing={isModalClosing} />}
+            {activeApp === 'experience' && <ExperienceModal onClose={closeModal} modalPopStyle={getModalPopStyle(760, 700)} isClosing={isModalClosing} />}
+            {activeApp === 'projects-folder' && <ProjectsFolderModal apps={apps} setActiveApp={setActiveApp} openApp={openApp} modalPopStyle={getModalPopStyle(500, 360)} />}
+            {projectsClosingGhostOrigin && (
+                <ProjectsFolderModal
+                    apps={apps}
+                    setActiveApp={setActiveApp}
+                    openApp={openApp}
+                    modalPopStyle={computeModalPopStyle(projectsClosingGhostOrigin, 500, 360)}
+                    isClosing={true}
+                    interactive={false}
+                />
+            )}
             {activeApp === 'stack' && <StackModal setActiveApp={setActiveApp} />}
             {activeApp === 'search' && <SearchModal apps={apps} searchQuery={searchQuery} setSearchQuery={setSearchQuery} setActiveApp={setActiveApp} />}
-            {activeApp === 'music' && <MusicModal setActiveApp={setActiveApp} />}
-            {activeApp === 'photos' && <PhotoBoothModal setActiveApp={setActiveApp} />}
-            {activeApp === 'messages' && <MessagesModal setActiveApp={setActiveApp} />}
+            {activeApp === 'music' && <MusicModal onClose={closeModal} modalPopStyle={getModalPopStyle(360, 640)} isClosing={isModalClosing} />}
+            {activeApp === 'thriive' && <ThriiveModal onClose={closeModal} modalPopStyle={getModalPopStyle(760, 640)} isClosing={isModalClosing} />}
+            {activeApp === 'black' && <AgenticVideoEditorModal onClose={closeModal} modalPopStyle={getModalPopStyle(760, 600)} isClosing={isModalClosing} />}
+            {activeApp === 'photos' && <PhotoBoothModal onClose={closeModal} modalPopStyle={getModalPopStyle(500, 620)} isClosing={isModalClosing} />}
+            {activeApp === 'messages' && <MessagesModal onClose={closeModal} modalPopStyle={getModalPopStyle(400, 600)} isClosing={isModalClosing} />}
 
             {showToast && (
                 <div style={{
@@ -1764,13 +2455,115 @@ export const TabletUI = ({ activeApp, setActiveApp }) => {
 
             <style>{`
                 .app-icon { transition: transform 0.2s; }
-                .app-icon:hover { transform: scale(1.08); }
+                .app-icon:hover { transform: translateY(-4px) scale(1.1); }
+                .app-icon:hover .app-tile {
+                    transform: translateY(-2px) rotate(-1deg);
+                    box-shadow:
+                        0 18px 32px rgba(0, 0, 0, 0.22),
+                        0 0 20px rgba(255, 255, 255, 0.14);
+                }
+                .app-tile {
+                    transition: transform 0.22s cubic-bezier(0.2, 0.9, 0.25, 1),
+                                box-shadow 0.22s cubic-bezier(0.2, 0.9, 0.25, 1);
+                }
+                .app-glass-outline {
+                    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+                    box-shadow:
+                        0 8px 24px rgba(0, 0, 0, 0.14),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.45),
+                        inset 0 -1px 0 rgba(255, 255, 255, 0.12) !important;
+                }
                 .dock-icon { transition: transform 0.2s; }
                 .dock-icon:hover { transform: scale(1.15); }
+                .modal-pop {
+                    animation: modalPopIn 460ms cubic-bezier(0.22, 1, 0.36, 1);
+                    transform-origin: center bottom;
+                }
+                .modal-pop-out {
+                    animation: modalPopOut 280ms cubic-bezier(0.4, 0, 0.2, 1) forwards;
+                }
+                .folder-pop-out {
+                    animation: folderPopOut 150ms ease-out forwards;
+                    transform-origin: center center !important;
+                }
                 .glass-search-input::placeholder { color: rgba(255, 255, 255, 0.5); }
+                .glass-card {
+                    background: rgba(255, 255, 255, 0.32);
+                    backdrop-filter: blur(10px);
+                    -webkit-backdrop-filter: blur(10px);
+                    will-change: backdrop-filter, transform;
+                    transform: translateZ(0);
+                    border-radius: 20px;
+                    border: 1px solid rgba(255, 255, 255, 0.3);
+                    box-shadow:
+                        0 8px 32px rgba(0, 0, 0, 0.1),
+                        inset 0 1px 0 rgba(255, 255, 255, 0.5),
+                        inset 0 -1px 0 rgba(255, 255, 255, 0.1),
+                        inset 0 0 56px 28px rgba(255, 255, 255, 0.28);
+                    position: relative;
+                    overflow: hidden;
+                }
+                .glass-card::before {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    right: 0;
+                    height: 1px;
+                    background: linear-gradient(
+                        90deg,
+                        transparent,
+                        rgba(255, 255, 255, 0.8),
+                        transparent
+                    );
+                }
+                .glass-card::after {
+                    content: '';
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 1px;
+                    height: 100%;
+                    background: linear-gradient(
+                        180deg,
+                        rgba(255, 255, 255, 0.8),
+                        transparent,
+                        rgba(255, 255, 255, 0.3)
+                    );
+                }
                 @keyframes fadeIn {
                     from { opacity: 0; }
                     to { opacity: 1; }
+                }
+                @keyframes modalPopIn {
+                    from {
+                        opacity: 0;
+                        transform: scale(0.06);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                }
+                @keyframes modalPopOut {
+                    from {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: scale(0.12);
+                    }
+                }
+                @keyframes folderPopOut {
+                    from {
+                        opacity: 1;
+                        transform: scale(1);
+                    }
+                    to {
+                        opacity: 0;
+                        transform: scale(0.92);
+                    }
                 }
                 .loader {
                     width: 40px;
